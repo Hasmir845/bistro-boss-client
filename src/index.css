@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Center the thumbnails */
+.carousel .thumbs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px; 
+}
+
+/* Customize thumbnails */
+.carousel .thumb {
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    opacity: 0.6; 
+}
+
+/* Highlight active thumbnail */
+.carousel .thumb.selected {
+    border: 2px solid #ff6600; /* Active thumb border color */
+    opacity: 1;
+}
