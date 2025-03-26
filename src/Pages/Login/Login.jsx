@@ -1,15 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import { AuthContext } from '../../Providers/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import Swal from 'sweetalert2';
 
 const Login = () => {
-    const captchaRef = useRef(null);
 
     const [disabled, setDisabled] = useState(true)
 
     const {signIn} = useContext(AuthContext);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const from = location.state?.from?.pathname || "/";
 
     useEffect(()=>{
         loadCaptchaEnginge(6);
@@ -27,11 +33,30 @@ const Login = () => {
         .then(result => {
             const user = result.user;
             console.log(user);
+
+            Swal.fire({
+              title: "User Login Successful",
+              showClass: {
+                popup: `
+                  animate__animated
+                  animate__fadeInUp
+                  animate__faster
+                `
+              },
+              hideClass: {
+                popup: `
+                  animate__animated
+                  animate__fadeOutDown
+                  animate__faster
+                `
+              }
+            });
+            navigate(from, {replace: true});
         })
     }
 
-    const handleValidateCaptcha = ()=>{
-        const value = captchaRef.current.value;
+    const handleValidateCaptcha = (e)=>{
+        const value = e.target.value;
         if(validateCaptcha(value)){
             setDisabled(false);
         }
@@ -41,6 +66,12 @@ const Login = () => {
     }
 
     return (
+
+      <>
+      <Helmet>
+            <title>Bistro Boss | Login</title>
+          </Helmet>
+
         <div className="hero bg-base-200 min-h-screen">
   <div className="hero-content flex-col lg:flex-row-reverse">
     <div className="text-center md:w-1/2 lg:text-left">
@@ -71,8 +102,7 @@ const Login = () => {
           <label className="label">
           <LoadCanvasTemplate />
           </label>
-          <input type="text" ref={captchaRef} name='captcha' placeholder="Right the Captcha" className="input input-bordered" required />
-          <button onClick={handleValidateCaptcha} className=' btn btn-outline btn-xs mt-3'>Validate</button>
+          <input onBlur={handleValidateCaptcha} type="text" name='captcha' placeholder="Right the Captcha" className="input input-bordered" required />
         </div>
         <div className="form-control mt-6">
           <input disabled={disabled} className="btn btn-primary" type="submit" name="" id="" value={"Login"} />
@@ -82,6 +112,8 @@ const Login = () => {
     </div>
   </div>
 </div>
+      </>
+      
     );
 };
 
