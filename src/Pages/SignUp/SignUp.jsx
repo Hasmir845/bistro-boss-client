@@ -4,11 +4,14 @@ import { AuthContext } from "../../Providers/AuthProvider";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import SocialLogin from "../../Components/SocialLogin/SocialLogin";
 
 const SignUp = () => {
 
   const {createUser, updateUserProfile} = useContext(AuthContext);
   const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
 
   const {
     register,
@@ -18,15 +21,22 @@ const SignUp = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
     createUser(data.email, data.password)
     .then(result => {
       const loggedUser = result.user;
       console.log(loggedUser)
       updateUserProfile(data.name, data.photoURL)
       .then(()=>{
-        console.log('User profile info updated');
-        reset()
+      // create user entry in database
+        const userInfo = {
+          name: data.name,
+          email: data.email,
+        }
+        axiosPublic.post('/users',userInfo)
+        .then(res =>{
+          if(res.data.insertedId){
+            console.log("user added to the database");
+            reset()
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -35,6 +45,9 @@ const SignUp = () => {
           timer: 1500
         });
         navigate('/');
+          }
+        })
+        
       })
       .catch(error => console.log(error))
     })
@@ -138,7 +151,11 @@ const SignUp = () => {
               />
             </div>
           </form>
-          <p><small>Already have an account?<Link to={"/login"}>Login</Link></small></p>
+          <p className=" px-6 py-2"><small>Already have an account?<Link to={"/login"}>Login</Link></small></p>
+          <div className=' divider'></div>
+      <div className=' mx-auto my-2'>
+      <SocialLogin></SocialLogin>
+      </div>
         </div>
       </div>
     </div>

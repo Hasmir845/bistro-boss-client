@@ -5,6 +5,7 @@ import { AuthContext } from '../../Providers/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
+import SocialLogin from '../../Components/SocialLogin/SocialLogin';
 
 const Login = () => {
 
@@ -108,7 +109,12 @@ const Login = () => {
           <input disabled={disabled} className="btn btn-primary" type="submit" name="" id="" value={"Login"} />
         </div>
       </form>
-      <p><small>New Here? <Link to={'/signup'}>Create an Account</Link></small></p>
+      
+      <p className=' px-6'><small>New Here? <Link to={'/signup'}>Create an Account</Link></small></p>
+      <div className=' divider'></div>
+      <div className=' mx-auto my-2'>
+      <SocialLogin></SocialLogin>
+      </div>
     </div>
   </div>
 </div>

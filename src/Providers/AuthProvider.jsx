@@ -2,8 +2,10 @@ import React, { createContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -16,6 +18,7 @@ const auth = getAuth(app);
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const googleProvider = new GoogleAuthProvider();
 
   const createUser = (email, password) => {
     setLoading(true);
@@ -26,6 +29,11 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email,password);
   };
+
+  const googleSignIn = ()=>{
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
+  }
 
   const logOut = () => {
     setLoading(true);
@@ -41,7 +49,12 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      console.log("current User", currentUser);
+      if(currentUser){
+        // get token and store client
+      }
+      else{
+        // TODO: remove token(if token stored in the client side)
+      }
       setLoading(false);
     });
     return () => {
@@ -54,6 +67,7 @@ const AuthProvider = ({ children }) => {
     loading,
     createUser,
     signIn,
+    googleSignIn,
     logOut,
     updateUserProfile,
   };
